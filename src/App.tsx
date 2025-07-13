@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [mode, setMode] = useState<'default' | 'dark' | 'green'>('default');
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  // Functions to change modes
   const setDefaultMode = () => setMode('default');
   const setDarkMode = () => setMode('dark');
   const setGreenMode = () => setMode('green');
 
-  // Colors for container
   let backgroundColor = '#ffffff';
   let textColor = '#000000';
 
@@ -25,8 +26,20 @@ function App() {
     textColor = '#000000';
   }
 
+  // 📸 Export to PNG
+  const exportAsPNG = async () => {
+    if (containerRef.current) {
+      const canvas = await html2canvas(containerRef.current, { backgroundColor: null });
+      const link = document.createElement('a');
+      link.download = 'vox_text.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  };
+
   return (
     <div
+      ref={containerRef}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -83,9 +96,7 @@ function App() {
           e.target.style.boxShadow = 'none';
         }}
       />
-      {/* Mode buttons */}
       <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-        {/* Default */}
         <button
           onClick={setDefaultMode}
           style={{
@@ -98,8 +109,6 @@ function App() {
           }}
           title="Default Mode"
         />
-
-        {/* Dark mode */}
         <button
           onClick={setDarkMode}
           style={{
@@ -112,8 +121,6 @@ function App() {
           }}
           title="Dark Mode"
         />
-
-        {/* Green mode */}
         <button
           onClick={setGreenMode}
           style={{
@@ -127,6 +134,23 @@ function App() {
           title="Green Mode"
         />
       </div>
+
+      {/* Export button */}
+      <button
+        onClick={exportAsPNG}
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '8px',
+          border: 'none',
+          backgroundColor: '#333',
+          color: '#fff',
+          cursor: 'pointer',
+        }}
+      >
+        Download as PNG
+      </button>
 
       <footer
         style={{
