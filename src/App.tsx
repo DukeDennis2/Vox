@@ -1,9 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 
+
+
+
 function App() {
-  const [inputValue, setInputValue] = useState('Vox');
+
+  useEffect(() => {
+  document.title = 'Vox';
+  }, []);
+
+  const [inputValue, setInputValue] = useState('');
   const [mode, setMode] = useState<'default' | 'dark' | 'green'>('default');
+  const [showAbout, setShowAbout] = useState(false);
+
 
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +57,7 @@ function App() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Georgia, "Times New Roman", Times, serif',
         padding: '0 20px',
         boxSizing: 'border-box',
         backgroundColor: backgroundColor,
@@ -73,34 +83,52 @@ function App() {
         {inputValue}
       </div>
       <input
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Type something..."
+      type="text"
+      value={inputValue}
+      onChange={handleInputChange}
+      placeholder="Type something..."
+      style={{
+        marginTop: '1.5em',
+        padding: '12px 16px',
+        fontSize: '20px',
+        width: '100%',
+        maxWidth: '400px',
+        boxSizing: 'border-box',
+        fontFamily: 'Georgia, "Times New Roman", Times, serif',
+        backgroundColor: 'transparent',
+        color: 'inherit',
+        border: '2px solid #ccc',
+        borderRadius: '8px',
+        outline: 'none',
+        transition: 'border-color 0.3s, box-shadow 0.3s',
+      }}
+      onFocus={(e) => {
+        e.target.style.borderColor = '#888';
+        e.target.style.boxShadow = '0 0 5px rgba(0,0,0,0.2)';
+      }}
+      onBlur={(e) => {
+        e.target.style.borderColor = '#ccc';
+        e.target.style.boxShadow = 'none';
+      }}
+    />
+
+    {inputValue && (
+      <div
+        onClick={() => setInputValue('')}
         style={{
-          marginTop: '1.5em',
-          padding: '12px 16px',
-          fontSize: '20px',
-          width: '100%',
-          maxWidth: '400px',
-          boxSizing: 'border-box',
-          fontFamily: 'Georgia, "Times New Roman", Times, serif',
-          backgroundColor: 'transparent',
-          color: 'inherit',
-          border: '2px solid #ccc',
-          borderRadius: '8px',
-          outline: 'none',
-          transition: 'border-color 0.3s, box-shadow 0.3s',
+          marginTop: '5px',
+          cursor: 'pointer',
+          fontWeight: '100',
+          fontSize: '18px',
+          color: '#888',
+          userSelect: 'none',
         }}
-        onFocus={(e) => {
-          e.target.style.borderColor = '#888';
-          e.target.style.boxShadow = '0 0 5px rgba(0,0,0,0.2)';
-        }}
-        onBlur={(e) => {
-          e.target.style.borderColor = '#ccc';
-          e.target.style.boxShadow = 'none';
-        }}
-      />
+        title="Clear text"
+      >
+        ✖ Clear
+      </div>
+    )}
+      
       <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
         <button
           onClick={setDefaultMode}
@@ -157,6 +185,64 @@ function App() {
         Download as PNG
       </button>
 
+
+      {/* About toggle button */}
+      <button
+        onClick={() => setShowAbout(true)}
+        style={{
+          marginTop: '10px',
+          padding: '8px 16px',
+          fontSize: '14px',
+          borderRadius: '6px',
+          border: 'none',
+          backgroundColor: '#555',
+          color: '#fff',
+          cursor: 'pointer',
+        }}
+      >
+        About
+      </button>
+
+      {showAbout && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '60px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '500px',
+            backgroundColor: '#ffffff',
+            color: '#333',
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            padding: '20px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+            fontSize: '14px',
+            lineHeight: '1.5',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={() => setShowAbout(false)}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '15px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            ✖
+          </div>
+          <p>
+            <strong>Vox</strong> Vox is a modern, minimalist web application  
+            designed to help you project your words and your creativity. You can easily adjust the 
+            viewing mode (light, dark, or green), making it perfect for creating aesthetic screenshots, live presentations, 
+            or even custom meme images.
+          </p>
+        </div>
+      )}
       <footer
         style={{
           position: 'fixed',
