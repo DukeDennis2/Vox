@@ -2,10 +2,10 @@ import React, { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
 
 function App() {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('Vox');
   const [mode, setMode] = useState<'default' | 'dark' | 'green'>('default');
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -26,10 +26,12 @@ function App() {
     textColor = '#000000';
   }
 
-  // 📸 Export to PNG
+  // 📸 Export only projected text
   const exportAsPNG = async () => {
-    if (containerRef.current) {
-      const canvas = await html2canvas(containerRef.current, { backgroundColor: null });
+    if (textRef.current) {
+      const canvas = await html2canvas(textRef.current, {
+        backgroundColor: backgroundColor, // Use current mode background
+      });
       const link = document.createElement('a');
       link.download = 'vox_text.png';
       link.href = canvas.toDataURL('image/png');
@@ -39,7 +41,6 @@ function App() {
 
   return (
     <div
-      ref={containerRef}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -55,6 +56,7 @@ function App() {
       }}
     >
       <div
+        ref={textRef}
         style={{
           fontWeight: '100',
           fontSize: '64px',
@@ -62,7 +64,10 @@ function App() {
           textAlign: 'center',
           wordBreak: 'break-word',
           width: '100%',
-          maxWidth: '600px', 
+          maxWidth: '600px',
+          backgroundColor: backgroundColor, // background color in export
+          color: textColor,
+          padding: '20px',
         }}
       >
         {inputValue}
@@ -73,14 +78,14 @@ function App() {
         onChange={handleInputChange}
         placeholder="Type something..."
         style={{
-          marginTop:'1.5em',
+          marginTop: '1.5em',
           padding: '12px 16px',
           fontSize: '20px',
           width: '100%',
           maxWidth: '400px',
           boxSizing: 'border-box',
           fontFamily: 'Georgia, "Times New Roman", Times, serif',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           color: 'inherit',
           border: '2px solid #ccc',
           borderRadius: '8px',
